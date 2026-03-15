@@ -6,23 +6,16 @@ import 'screens/dashboard_screen.dart';
 
 /// Entry point of the Construction Monitoring IoT application.
 ///
-/// Initializes Firebase with the provided configuration before
-/// launching the Flutter app.
+/// Initializes Firebase using the native configuration provided by
+/// `google-services.json` (Android) before launching the Flutter app.
 Future<void> main() async {
   // Ensure Flutter bindings are initialized before Firebase
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase with the project configuration
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'AIzaSyDbfk7tOz3fhlOLnlkWryPuUAny6tN2Zhk',
-      appId: '1:000000000000:web:0000000000000000000000',
-      messagingSenderId: '000000000000',
-      projectId: 'construction-monitoring-iot',
-      databaseURL:
-          'https://construction-monitoring-iot-default-rtdb.firebaseio.com/',
-    ),
-  );
+  // Initialize Firebase using the native google-services.json configuration.
+  // Do not pass explicit FirebaseOptions here — the Google Services Gradle
+  // plugin already registers the default app on the native Android side.
+  await Firebase.initializeApp();
 
   // Set the Firebase Realtime Database URL
   FirebaseDatabase.instance.databaseURL =
