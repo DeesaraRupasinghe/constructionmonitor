@@ -107,6 +107,48 @@ void main() {
       expect(formatted, contains('11'));
     });
 
+    test('formattedReceivedAt returns current time, not device uptime', () {
+      // Arrange: use a small timestamp simulating IoT device millis()
+      final before = DateTime.now();
+      final sensor = SensorData(
+        distance: 10.0,
+        soilMoisture: 734.0,
+        tiltX: 1.94,
+        tiltY: -2.06,
+        vibration: 1.0,
+        timestamp: 31791, // device uptime in ms, NOT Unix timestamp
+      );
+      final after = DateTime.now();
+
+      // Act
+      final formatted = sensor.formattedReceivedAt;
+
+      // Assert: receivedAt should be around now, not 1970
+      expect(sensor.receivedAt.isAfter(before) || sensor.receivedAt.isAtSameMomentAs(before), isTrue);
+      expect(sensor.receivedAt.isBefore(after) || sensor.receivedAt.isAtSameMomentAs(after), isTrue);
+      expect(formatted, contains('${before.year}'));
+      // Verify it does NOT contain 1970
+      expect(formatted, isNot(contains('1970')));
+    });
+
+    test('receivedAt can be explicitly provided', () {
+      // Arrange: provide a specific receivedAt
+      final specificTime = DateTime(2025, 6, 15, 14, 30, 0);
+      final sensor = SensorData(
+        distance: 10.0,
+        soilMoisture: 0,
+        tiltX: 0,
+        tiltY: 0,
+        vibration: 0,
+        timestamp: 31791,
+        receivedAt: specificTime,
+      );
+
+      // Assert
+      expect(sensor.receivedAt, specificTime);
+      expect(sensor.formattedReceivedAt, '2025-06-15 14:30:00');
+    });
+
     test('toString returns a meaningful string representation', () {
       // Arrange
       final sensor = SensorData(

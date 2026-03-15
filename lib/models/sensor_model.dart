@@ -1,7 +1,7 @@
 /// Model class representing a single sensor log entry from Firebase.
 ///
 /// Each entry contains sensor readings for distance, soil moisture,
-/// tilt (X and Y axes), vibration, and a timestamp.
+/// tilt (X and Y axes), vibration, and a device timestamp.
 class SensorData {
   /// Distance reading from the ultrasonic sensor (in cm).
   final double distance;
@@ -18,18 +18,27 @@ class SensorData {
   /// Vibration intensity reading from the vibration sensor.
   final double vibration;
 
-  /// Unix timestamp (in milliseconds) when the reading was recorded.
+  /// Device timestamp (e.g. millis since boot) from the IoT sensor.
+  ///
+  /// Note: This is typically the IoT device's uptime counter, not a
+  /// Unix timestamp. Use [receivedAt] for the actual wall-clock time.
   final int timestamp;
 
+  /// The wall-clock time when this sensor data was received by the app.
+  final DateTime receivedAt;
+
   /// Creates a [SensorData] instance with the given sensor values.
-  const SensorData({
+  ///
+  /// If [receivedAt] is not provided, it defaults to the current time.
+  SensorData({
     required this.distance,
     required this.soilMoisture,
     required this.tiltX,
     required this.tiltY,
     required this.vibration,
     required this.timestamp,
-  });
+    DateTime? receivedAt,
+  }) : receivedAt = receivedAt ?? DateTime.now();
 
   /// Creates a [SensorData] instance from a Firebase Realtime Database map.
   ///
@@ -70,10 +79,22 @@ class SensorData {
   /// Returns a human-readable date/time string from the [timestamp].
   ///
   /// Converts the Unix timestamp (milliseconds) to a local DateTime string.
+  /// Note: If the device sends uptime instead of Unix time, prefer
+  /// [formattedReceivedAt] for display purposes.
   String get formattedTimestamp {
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     return '${dateTime.year}-${_pad(dateTime.month)}-${_pad(dateTime.day)} '
         '${_pad(dateTime.hour)}:${_pad(dateTime.minute)}:${_pad(dateTime.second)}';
+  }
+
+  /// Returns a human-readable date/time string from [receivedAt].
+  ///
+  /// This shows the actual wall-clock time when the data was received
+  /// by the app, which is reliable even when the IoT device sends
+  /// device uptime instead of a Unix timestamp.
+  String get formattedReceivedAt {
+    return '${receivedAt.year}-${_pad(receivedAt.month)}-${_pad(receivedAt.day)} '
+        '${_pad(receivedAt.hour)}:${_pad(receivedAt.minute)}:${_pad(receivedAt.second)}';
   }
 
   /// Pads a single-digit number with a leading zero.

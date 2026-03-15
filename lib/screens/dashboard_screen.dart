@@ -128,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Last Updated: ${data.formattedTimestamp}',
+                    'Last Updated: ${data.formattedReceivedAt}',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -194,7 +194,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SensorCard(
                 icon: Icons.schedule,
                 label: 'Timestamp',
-                value: data.formattedTimestamp,
+                value: data.formattedReceivedAt,
                 color: Colors.teal,
               ),
             ],
