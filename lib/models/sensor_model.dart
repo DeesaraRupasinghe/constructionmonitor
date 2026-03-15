@@ -1,10 +1,10 @@
 /// Model class representing a single sensor log entry from Firebase.
 ///
 /// Each entry contains sensor readings for distance, soil moisture,
-/// tilt (X and Y axes), vibration, and a device timestamp.
+/// tilt (X and Y axes), vibration, collapse alert, and a device timestamp.
 class SensorData {
   /// Distance reading from the ultrasonic sensor (in cm).
-  final double distance;
+  final double distanceCM;
 
   /// Soil moisture level from the moisture sensor.
   final double soilMoisture;
@@ -17,6 +17,9 @@ class SensorData {
 
   /// Vibration intensity reading from the vibration sensor.
   final double vibration;
+
+  /// Whether a collapse alert has been triggered.
+  final bool collapseAlert;
 
   /// Device timestamp (e.g. millis since boot) from the IoT sensor.
   ///
@@ -31,11 +34,12 @@ class SensorData {
   ///
   /// If [receivedAt] is not provided, it defaults to the current time.
   SensorData({
-    required this.distance,
+    required this.distanceCM,
     required this.soilMoisture,
     required this.tiltX,
     required this.tiltY,
     required this.vibration,
+    required this.collapseAlert,
     required this.timestamp,
     DateTime? receivedAt,
   }) : receivedAt = receivedAt ?? DateTime.now();
@@ -47,11 +51,12 @@ class SensorData {
   /// via [_toInt].
   factory SensorData.fromMap(Map<dynamic, dynamic> map) {
     return SensorData(
-      distance: _toDouble(map['distance']),
+      distanceCM: _toDouble(map['distanceCM']),
       soilMoisture: _toDouble(map['soilMoisture']),
       tiltX: _toDouble(map['tiltX']),
       tiltY: _toDouble(map['tiltY']),
       vibration: _toDouble(map['vibration']),
+      collapseAlert: _toBool(map['collapseAlert']),
       timestamp: _toInt(map['timestamp']),
     );
   }
@@ -74,6 +79,17 @@ class SensorData {
     if (value is int) return value;
     if (value is double) return value.toInt();
     return int.tryParse(value.toString()) ?? 0;
+  }
+
+  /// Safely converts a dynamic value to bool.
+  ///
+  /// Returns false if the value is null or cannot be converted.
+  static bool _toBool(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is int) return value != 0;
+    if (value is String) return value.toLowerCase() == 'true';
+    return false;
   }
 
   /// Returns a human-readable date/time string from the [timestamp].
@@ -102,8 +118,8 @@ class SensorData {
 
   @override
   String toString() {
-    return 'SensorData(distance: $distance, soilMoisture: $soilMoisture, '
+    return 'SensorData(distanceCM: $distanceCM, soilMoisture: $soilMoisture, '
         'tiltX: $tiltX, tiltY: $tiltY, vibration: $vibration, '
-        'timestamp: $timestamp)';
+        'collapseAlert: $collapseAlert, timestamp: $timestamp)';
   }
 }

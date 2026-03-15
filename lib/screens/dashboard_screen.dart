@@ -114,6 +114,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Collapse alert banner (shown when alert is active)
+          if (data.collapseAlert)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(25),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.red, width: 2),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '⚠ Collapse Alert Active',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // Dashboard header with last updated timestamp
           Container(
             width: double.infinity,
@@ -154,7 +183,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SensorCard(
                 icon: Icons.straighten,
                 label: 'Distance',
-                value: '${data.distance.toStringAsFixed(2)} cm',
+                value: '${data.distanceCM.toStringAsFixed(2)} cm',
                 color: Colors.blue,
               ),
 
