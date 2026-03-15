@@ -4,29 +4,40 @@ import 'package:flutter/material.dart';
 
 import 'screens/dashboard_screen.dart';
 
+/// Entry point of the Construction Monitoring IoT application.
+///
+/// Initializes Firebase with the provided configuration before
+/// launching the Flutter app.
 Future<void> main() async {
+  // Ensure Flutter bindings are initialized before Firebase
   WidgetsFlutterBinding.ensureInitialized();
 
   // Prevent duplicate Firebase initialization
   if (Firebase.apps.isEmpty) {
+    // Initialize Firebase with the project configuration
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        apiKey: 'AIzaSyDbfk7tOz3fhlOLnlkWryPuUAny6tN2Zhk',
-        appId: '1:000000000000:web:0000000000000000000000',
-        messagingSenderId: '000000000000',
+        apiKey: 'AIzaSyC-ufRlaSXBZR4uMH8Hz4jzIhf_ITapZCs',
+        appId: '1:951766696602:android:3a7a600be4d88ac041d523',
+        messagingSenderId: '951766696602',
         projectId: 'construction-monitoring-iot',
+        storageBucket: 'construction-monitoring-iot.firebasestorage.app',
         databaseURL:
-        'https://construction-monitoring-iot-default-rtdb.firebaseio.com/',
+            'https://construction-monitoring-iot-default-rtdb.firebaseio.com/',
       ),
     );
   }
 
+  // Set the Firebase Realtime Database URL
   FirebaseDatabase.instance.databaseURL =
-  'https://construction-monitoring-iot-default-rtdb.firebaseio.com/';
+      'https://construction-monitoring-iot-default-rtdb.firebaseio.com/';
 
   runApp(const ConstructionMonitorApp());
 }
 
+/// Root widget of the Construction Monitoring IoT application.
+///
+/// Configures the app theme and sets the [DashboardScreen] as the home screen.
 class ConstructionMonitorApp extends StatelessWidget {
   const ConstructionMonitorApp({super.key});
 
